@@ -1,0 +1,158 @@
+
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 100
+
+struct Food {
+    int id;
+    char name[50];
+    float price;
+};
+
+struct Order {
+    int foodId;
+    int quantity;
+};
+
+struct Food menu[MAX] = {
+    {1, "Pizza", 250},
+    {2, "Burger", 120},
+    {3, "Pasta", 180},
+    {4, "Sandwich", 80},
+    {5, "Fries", 100}
+};
+
+int foodCount = 5;
+
+void displayMenu() {
+    int i;
+
+    printf("\n========== FOOD MENU ==========\n");
+    printf("ID\tFood Name\tPrice\n");
+
+    for (i = 0; i < foodCount; i++) {
+        printf("%d\t%-15s Rs. %.2f\n",
+               menu[i].id,
+               menu[i].name,
+               menu[i].price);
+    }
+}
+
+void placeOrder() {
+    struct Order orders[MAX];
+    int count = 0;
+    int id, quantity, i, found;
+    float total = 0;
+
+    displayMenu();
+
+    printf("\nEnter 0 as Food ID to finish ordering.\n");
+
+    while (count < MAX) {
+        printf("\nEnter Food ID: ");
+        if (scanf("%d", &id) != 1) {
+            printf("Invalid input!\n");
+            return;
+        }
+
+        if (id == 0)
+            break;
+
+        found = 0;
+
+        for (i = 0; i < foodCount; i++) {
+            if (menu[i].id == id) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            printf("Invalid Food ID!\n");
+            continue;
+        }
+
+        printf("Enter quantity: ");
+        if (scanf("%d", &quantity) != 1) {
+            printf("Invalid input!\n");
+            return;
+        }
+
+        if (quantity <= 0) {
+            printf("Quantity must be positive!\n");
+            continue;
+        }
+
+        orders[count].foodId = id;
+        orders[count].quantity = quantity;
+        total += menu[i].price * quantity;
+        count++;
+
+        printf("Item added successfully!\n");
+    }
+
+    if (count == 0) {
+        printf("\nNo items ordered.\n");
+        return;
+    }
+
+    printf("\n========== ORDER BILL ==========\n");
+    printf("Food Name\tQty\tPrice\tSubtotal\n");
+
+    for (i = 0; i < count; i++) {
+        int j;
+
+        for (j = 0; j < foodCount; j++) {
+            if (menu[j].id == orders[i].foodId) {
+                printf("%-15s\t%d\t%.2f\t%.2f\n",
+                       menu[j].name,
+                       orders[i].quantity,
+                       menu[j].price,
+                       menu[j].price * orders[i].quantity);
+                break;
+            }
+        }
+    }
+
+    printf("--------------------------------\n");
+    printf("Total Amount: Rs. %.2f\n", total);
+    printf("Order placed successfully!\n");
+}
+
+int main() {
+    int choice;
+
+    do {
+        printf("\n====== FOOD ORDER MANAGEMENT SYSTEM ======\n");
+        printf("1. Display Food Menu\n");
+        printf("2. Place Food Order\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input!\n");
+            return 1;
+        }
+
+        switch (choice) {
+            case 1:
+                displayMenu();
+                break;
+
+            case 2:
+                placeOrder();
+                break;
+
+            case 3:
+                printf("Thank you for using our system!\n");
+                break;
+
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+
+    } while (choice != 3);
+
+    return 0;
+}
